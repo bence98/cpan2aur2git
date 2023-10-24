@@ -1,0 +1,36 @@
+#!/bin/bash
+
+##########################################
+# CPAN2AUR2Git bot (CpanBot)
+# Usage: cpan2aur2git <Perl::Pkg::Name>
+# Needs Git and SSH to be correctly
+#   configured for AUR uploading
+#
+# (c) CsokiCraft, 2023
+# SPDX-License-Identifier: GPL-3.0-or-later
+##########################################
+
+PERL_PKG="$1"
+
+[ -z "$PERL_PKG" ] && {
+	echo "Usage: cpan2aur2git <Perl::Pkg::Name>" >&1
+	exit 1
+}
+
+TMPDIR="$(mktemp -d)"
+trap 'cd && rm -rf "$TMPDIR"' EXIT
+cd "$TMPDIR"
+
+cpan2aur "$PERL_PKG"
+
+TARFILE="$(ls -1b *.tar.gz | head -n1)"
+AUR_PKG="$(tar tf "$TARFILE" | head -n1)"
+
+git clone "ssh://aur@aur.archlinux.org/$AUR_PKG"
+tar xf "$TARFILE"
+
+cd "$AUR_PKG"
+sed -i "s/^# Contributor: Anonymous$/# Contributor: CpanBot <cpanbot at sch bme hu>/" PKGBUILD
+git add PKGBUILD .SRCINFO && git commit -m "Converted '$PERL_PKG' with cpan2aur2git"
+
+git push
