@@ -1,0 +1,28 @@
+#!/usr/bin/env python3
+
+import requests as req
+from sys import argv, stderr
+
+def prerr(str):
+	print(str, file=stderr)
+	exit(1)
+
+if len(argv)<=1:
+	prerr("Usage: {0} <perl-pkg-name>".format(argv[0]))
+
+pkg_name=argv[1]
+r=req.get("https://aur.archlinux.org/rpc/v5/info/"+pkg_name)
+r.raise_for_status()
+aurdata=r.json()
+
+if aurdata["resultcount"]<1:
+	prerr("No package named '{0}' found on AUR!".format(pkg_name))
+
+cpan_url=aurdata["results"][0]["URL"]
+cpan_url="https://fastapi.metacpan.org/v1"+cpan_url[20:]
+
+r=req.get(cpan_url)
+r.raise_for_status()
+cpandata=r.json()
+
+print(cpandata["main_module"])
