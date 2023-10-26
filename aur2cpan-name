@@ -2,15 +2,31 @@
 
 import requests as req
 from sys import argv, stderr
+import json
+from os.path import expanduser
+
+CACHEFILE=expanduser("~/.cache/aur2cpan-name.json")
 
 def prerr(str):
 	print(str, file=stderr)
 	exit(1)
 
+cache = {}
+try:
+	with open(CACHEFILE, "r") as f:
+		cache = json.load(f)
+except:
+	pass
+
 if len(argv)<=1:
 	prerr("Usage: {0} <perl-pkg-name>".format(argv[0]))
 
 pkg_name=argv[1]
+
+if pkg_name in cache:
+	print(cache[pkg_name])
+	exit(0)
+
 r=req.get("https://aur.archlinux.org/rpc/v5/info/"+pkg_name)
 r.raise_for_status()
 aurdata=r.json()
@@ -26,3 +42,7 @@ r.raise_for_status()
 cpandata=r.json()
 
 print(cpandata["main_module"])
+cache[pkg_name]=cpandata["main_module"]
+
+with open(CACHEFILE, "w") as f:
+	json.dump(cache, f)
