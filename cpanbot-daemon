@@ -1,0 +1,11 @@
+#!/bin/sh
+
+FIFO=/tmp/cpanbot.fifo
+
+rm -rf $FIFO && mknod $FIFO p
+
+while read -r AUR_PKG
+do
+        PERL_PKG=$(aur2cpan-name "$AUR_PKG")
+        cpan2aur2git "$PERL_PKG"
+done <$FIFO

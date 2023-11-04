@@ -1,0 +1,14 @@
+[Unit]
+Description=CpanBot daemon
+JoinsNamespaceOf=postfix.service
+
+[Service]
+ExecStart="/usr/local/bincpanbot-daemon"
+Environment="PATH=/usr/local/bin:/usr/bin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl"
+User=cpanbot
+PrivateTmp=true
+#Restart=on-failure
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

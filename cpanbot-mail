@@ -1,0 +1,16 @@
+#!/usr/bin/env python3
+
+# Mail handler for Postfix (or similar mailing daemons)
+# Usage: add to /etc/postfix/aliases:
+#   cpanbot: |/usr/local/bin/cpanbot-mail
+# and also start cpanbot-daemon.service
+
+import email
+from sys import stdin
+e=email.message_from_file(stdin)
+subj=e["Subject"]
+
+if subj.startswith("[cpanbot] AUR Out-of-date Notification for"):
+	with open("/tmp/cpanbot.fifo", "w") as f:
+		f.write(subj.split(' ')[-1])
+		f.write('\n')
