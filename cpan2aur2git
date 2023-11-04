@@ -31,7 +31,7 @@ git clone "ssh://aur@aur.archlinux.org/$AUR_PKG"
 tar xf "$TARFILE"
 
 cd "$AUR_PKG"
-sed -i "s/^# Contributor: Anonymous$/# Contributor: CpanBot <cpanbot at sch bme hu>/" PKGBUILD
+sed -i "s/^# Contributor: .*$/# Contributor: CpanBot <cpanbot at sch bme hu>/" PKGBUILD
 git add PKGBUILD .SRCINFO && git commit -m "Converted '$PERL_PKG' with cpan2aur2git"
 
 git push
