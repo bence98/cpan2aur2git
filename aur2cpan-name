@@ -39,7 +39,9 @@ if aurdata["resultcount"]<1:
 	prerr("No package named '{0}' found on AUR!".format(pkg_name))
 
 cpan_url=aurdata["results"][0]["URL"]
-cpan_url="https://fastapi.metacpan.org/v1"+cpan_url[20:]
+cpan_url=cpan_url.split('/')
+cpan_type="release"
+cpan_url="https://fastapi.metacpan.org/v1/"+cpan_type+"/"+cpan_url[-1]
 
 r=req.get(cpan_url, headers=headers)
 r.raise_for_status()
