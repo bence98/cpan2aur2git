@@ -15,6 +15,14 @@ def prerr(str):
 	print(str, file=stderr)
 	exit(1)
 
+def prdata(data, pr_lic):
+	ln=data["name"]
+	if pr_lic:
+		ln+="\t"
+		ln+=data["license"]
+	print(ln)
+	exit(0)
+
 cache = {}
 try:
 	with open(CACHEFILE, "r") as f:
@@ -23,13 +31,17 @@ except:
 	pass
 
 if len(argv)<=1:
-	prerr("Usage: {0} <perl-pkg-name>".format(argv[0]))
+	prerr("Usage: {0} <perl-pkg-name> [--print-license]".format(argv[0]))
 
 pkg_name=argv[1]
 
+print_lic=False
+if len(argv)>2:
+	print_lic=argv[1]=="--print-license"
+
 if pkg_name in cache:
-	print(cache[pkg_name])
-	exit(0)
+	if cache[pkg_name] is dict:
+		prdata(cache[pkg_name], print_lic)
 
 r=req.get("https://aur.archlinux.org/rpc/v5/info/"+pkg_name, headers=headers)
 r.raise_for_status()
@@ -47,8 +59,9 @@ r=req.get(cpan_url, headers=headers)
 r.raise_for_status()
 cpandata=r.json()
 
-print(cpandata["main_module"])
-cache[pkg_name]=cpandata["main_module"]
+cache[pkg_name]={"name": cpandata["main_module"]}
 
 with open(CACHEFILE, "w") as f:
 	json.dump(cache, f)
+
+prdata(cache[pkg_name], print_lic)
