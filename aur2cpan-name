@@ -23,6 +23,17 @@ def prdata(data, pr_lic):
 	print(ln)
 	exit(0)
 
+license_equiv={
+	"perl_5": "'PerlArtistic' 'GPL'",
+	"artistic_2": "'Artistic2.0'",
+	"apache_2_0": "'Apache'",
+	"lgpl_3_0": "'LGPL3'",
+	"bsd": "'BSD'" # TODO this is technically custom
+}
+
+def xlate_lic(lic):
+	return " ".join((license_equiv[l] for l in lic))
+
 cache = {}
 try:
 	with open(CACHEFILE, "r") as f:
@@ -37,10 +48,10 @@ pkg_name=argv[1]
 
 print_lic=False
 if len(argv)>2:
-	print_lic=argv[1]=="--print-license"
+	print_lic=argv[2]=="--print-license"
 
 if pkg_name in cache:
-	if cache[pkg_name] is dict:
+	if type(cache[pkg_name]) is dict:
 		prdata(cache[pkg_name], print_lic)
 
 r=req.get("https://aur.archlinux.org/rpc/v5/info/"+pkg_name, headers=headers)
@@ -60,6 +71,11 @@ r.raise_for_status()
 cpandata=r.json()
 
 cache[pkg_name]={"name": cpandata["main_module"]}
+cpanmeta=cpandata["metadata"]
+
+cache[pkg_name]["license"]=xlate_lic(cpanmeta["license"])
+if "x_spdx_expression" in cpanmeta:
+	cache[pkg_name]["spdx"]=cpanmeta["x_spdx_expression"]
 
 with open(CACHEFILE, "w") as f:
 	json.dump(cache, f)
