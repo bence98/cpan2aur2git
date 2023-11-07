@@ -32,6 +32,8 @@ tar xf "$TARFILE"
 
 cd "$AUR_PKG"
 sed -i "s/^# Contributor: .*$/# Contributor: CpanBot <cpanbot at sch bme hu>/" PKGBUILD
+LICENSE="$(aur2cpan-name "$AUR_PKG" --print-license)"
+sed -i "s/^license=(.*)$/license=($LICENSE)/" PKGBUILD
 git add PKGBUILD .SRCINFO && git commit -m "Converted '$PERL_PKG' with cpan2aur2git"
 
 _op=push
