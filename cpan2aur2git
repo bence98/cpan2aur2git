@@ -25,7 +25,7 @@ cd "$TMPDIR"
 cpan2aur "$PERL_PKG"
 
 TARFILE="$(ls -1b *.tar.gz | head -n1)"
-AUR_PKG="$(tar tf "$TARFILE" | head -n1)"
+AUR_PKG="$(tar tf "$TARFILE" | head -n1 | tr -d /)"
 
 git clone "ssh://aur@aur.archlinux.org/$AUR_PKG"
 tar xf "$TARFILE"
