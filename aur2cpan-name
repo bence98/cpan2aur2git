@@ -16,11 +16,10 @@ def prerr(str):
 	exit(1)
 
 def prdata(data, pr_lic):
-	ln=data["name"]
+	field="name"
 	if pr_lic:
-		ln+="\t"
-		ln+=data["license"]
-	print(ln)
+		field="license"
+	print(data[field])
 	exit(0)
 
 license_equiv={
