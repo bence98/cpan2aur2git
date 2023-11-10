@@ -14,7 +14,7 @@ set -e
 PERL_PKG="$1"
 
 [ -z "$PERL_PKG" ] && {
-	echo "Usage: cpan2aur2git <Perl::Pkg::Name> [--to-diff]" >&1
+	echo "Usage: cpan2aur2git <Perl::Pkg::Name> [--to-diff|--fixup]" >&1
 	exit 1
 }
 
@@ -33,10 +33,11 @@ tar xf "$TARFILE"
 cd "$AUR_PKG"
 sed -i "s/^# Contributor: .*$/# Contributor: CpanBot <cpanbot at sch bme hu>/" PKGBUILD
 LICENSE="$(aur2cpan-name "$AUR_PKG" --print-license)"
-sed -i "s/^license=(.*)$/license=($LICENSE)/" PKGBUILD
+sed -i "s/^license=(?:.*)$/license=($LICENSE)/" PKGBUILD
 makepkg --printsrcinfo > .SRCINFO
 git add PKGBUILD .SRCINFO && git commit -m "Converted '$PERL_PKG' with cpan2aur2git"
 
 _op=push
 [ "x$2" == "x--to-diff" ] && _op=show
+[ "x$2" == "x--fixup" ]   && exit $(/bin/bash)
 git $_op
