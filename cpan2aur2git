@@ -22,7 +22,7 @@ TMPDIR="$(mktemp -d)"
 trap 'cd && rm -rf "$TMPDIR"' EXIT
 cd "$TMPDIR"
 
-cpan2aur "$PERL_PKG"
+PACKAGER="CpanBot <cpanbot at sch bme hu>" cpan2aur "$PERL_PKG"
 
 TARFILE="$(ls -1b *.tar.gz | head -n1)"
 AUR_PKG="$(tar tf "$TARFILE" | head -n1 | tr -d /)"
@@ -31,7 +31,6 @@ git clone "ssh://aur@aur.archlinux.org/$AUR_PKG"
 tar xf "$TARFILE"
 
 cd "$AUR_PKG"
-sed -i "s/^# Contributor: .*$/# Contributor: CpanBot <cpanbot at sch bme hu>/" PKGBUILD
 
 [ "x$CPANBOT_IGNORE_LICENSE" != "x1" ] && {
 	LICENSE="$(aur2cpan-name "$AUR_PKG" --print-license)"
