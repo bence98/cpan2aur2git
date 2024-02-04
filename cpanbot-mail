@@ -6,11 +6,13 @@
 # and also start cpanbot-daemon.service
 
 import email
+from re import match
 from sys import stdin
 e=email.message_from_file(stdin)
 subj=e["Subject"]
+m=match("AUR Out-of-date Notification for (.*)$", subj)
 
-if subj.startswith("[cpanbot] AUR Out-of-date Notification for"):
+if m is not None:
 	with open("/tmp/cpanbot.fifo", "w") as f:
-		f.write(subj.split(' ')[-1])
+		f.write(m[1])
 		f.write('\n')
