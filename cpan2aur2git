@@ -34,7 +34,7 @@ cd "$AUR_PKG"
 
 [ "x$CPANBOT_IGNORE_LICENSE" != "x1" ] && {
 	LICENSE="$(aur2cpan-name "$AUR_PKG" --print-license)"
-	sed -i "s/^license=(?:.*)$/license=($LICENSE)/" PKGBUILD
+	sed -i "s/^license=.*$/license=($LICENSE)/" PKGBUILD
 }
 
 makepkg --printsrcinfo > .SRCINFO
