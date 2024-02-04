@@ -38,9 +38,11 @@ cd "$AUR_PKG"
 }
 
 makepkg --printsrcinfo > .SRCINFO
+
+[ "x$2" == "x--fixup" ]   && exec /bin/bash
+
 git add PKGBUILD .SRCINFO && git commit -m "Converted '$PERL_PKG' with cpan2aur2git"
 
 _op=push
 [ "x$2" == "x--to-diff" ] && _op=show
-[ "x$2" == "x--fixup" ]   && exit $(/bin/bash)
 git $_op
