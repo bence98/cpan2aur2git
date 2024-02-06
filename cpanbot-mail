@@ -2,7 +2,7 @@
 
 # Mail handler for Postfix (or similar mailing daemons)
 # Usage: add to /etc/postfix/aliases:
-#   cpanbot: |/usr/local/bin/cpanbot-mail
+#   cpanbot: |/usr/bin/cpanbot-mail
 # and also start cpanbot-daemon.service
 
 import email
