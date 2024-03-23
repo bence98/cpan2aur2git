@@ -37,6 +37,7 @@ cd "$AUR_PKG"
 	sed -i "s/^license=.*$/license=($LICENSE)/" PKGBUILD
 }
 
+git rm -fq --ignore-unmatch .AURINFO
 makepkg --printsrcinfo > .SRCINFO
 
 [ "x$2" == "x--fixup" ]   && exec /bin/bash
