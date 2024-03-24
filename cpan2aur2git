@@ -25,10 +25,10 @@ cd "$TMPDIR"
 PACKAGER="CpanBot <cpanbot at sch bme hu>" cpan2aur "$PERL_PKG"
 
 TARFILE="$(ls -1b *.tar.gz | head -n1)"
-AUR_PKG="$(tar tf "$TARFILE" | head -n1 | tr -d /)"
+AUR_PKG="$(tar -tf "$TARFILE" | head -n1 | tr -d /)"
 
 git clone "ssh://aur@aur.archlinux.org/$AUR_PKG"
-tar xf "$TARFILE"
+tar -xf "$TARFILE"
 
 cd "$AUR_PKG"
 
