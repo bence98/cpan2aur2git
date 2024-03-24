@@ -9,7 +9,7 @@ import email
 from re import match
 from sys import stdin
 e=email.message_from_file(stdin)
-subj=e["Subject"]
+subj=e["Subject"].replace("\n", "")
 m=match("AUR Out-of-date Notification for (.*)$", subj)
 
 if m is not None:
