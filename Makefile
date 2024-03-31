@@ -5,7 +5,7 @@ PREFIX=/usr
 BINDIR=${DESTDIR}${PREFIX}/bin
 SVCDIR=${DESTDIR}${PREFIX}/lib/systemd/system
 
-BINARIES=cpan2aur2git aur2cpan-name cpanbot-daemon cpanbot-mail
+BINARIES=cpan2aur2git aur2cpan-name cpanbot-daemon cpanbot-mail cpantools.py cpan-get-license
 SERVICES=cpanbot-daemon.service
 
 INSTALLED_FILES=$(foreach bin, ${BINARIES}, ${BINDIR}/${bin})
