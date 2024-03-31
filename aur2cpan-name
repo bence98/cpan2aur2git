@@ -1,15 +1,11 @@
 #!/usr/bin/env python3
 
-import requests as req
 from sys import argv, stderr
 import json
 from os.path import expanduser
+from cpantools import *
 
 CACHEFILE=expanduser("~/.cache/aur2cpan-name.json")
-
-headers={
-	'User-Agent': 'CpanBot/1.0 '+req.utils.default_user_agent()
-}
 
 def prerr(str):
 	print(str, file=stderr)
@@ -21,38 +17,6 @@ def prdata(data, pr_lic):
 		field="license"
 	print(data[field])
 	exit(0)
-
-license_equiv={
-	"perl_5": "'PerlArtistic' 'GPL'",
-	"apache_1_1": "'Apache 1.1'",
-	"apache_2_0": "'Apache 2.0'",
-	"artistic_1": "'PerlArtistic'",
-	"artistic_2": "'Artistic2.0'",
-	"agpl_3": "'AGPL3'",
-	"gpl_2": "'GPL2'",
-	"gpl_3": "'GPL3'",
-	"lgpl_2_1": "'LGPL2'",
-	"lgpl_3_0": "'LGPL3'",
-	"gfdl_1_2": "'FDL1.2'",
-	"gfdl_1_3": "'FDL1.3'",
-	# TODO check these!
-	"mozilla_1_0": "'MPL 1.0'",
-	"mozilla_1_1": "'MPL 1.1'",
-	# TODO these are custom!
-	"gpl_1": "'custom:GPLv1'",
-	"openssl": "'custom:OpenSSL License'",
-	"qpl_1_0": "'custom:Q Public License, Version 1.0'",
-	"ssleay": "'custom:Original SSLeay License'",
-	"sun": "'custom:Sun Internet Standards Source License (SISSL)'",
-	# TODO these are technically custom
-	"freebsd": "'BSD'",
-	"mit": "'MIT'",
-	"zlib": "'ZLIB'",
-	"bsd": "'BSD'" # TODO this is technically custom
-}
-
-def xlate_lic(lic):
-	return " ".join((license_equiv[l] for l in lic))
 
 cache = {}
 try:
@@ -74,21 +38,7 @@ if pkg_name in cache:
 	if type(cache[pkg_name]) is dict:
 		prdata(cache[pkg_name], print_lic)
 
-r=req.get("https://aur.archlinux.org/rpc/v5/info/"+pkg_name, headers=headers)
-r.raise_for_status()
-aurdata=r.json()
-
-if aurdata["resultcount"]<1:
-	prerr("No package named '{0}' found on AUR!".format(pkg_name))
-
-cpan_url=aurdata["results"][0]["URL"]
-cpan_url=cpan_url.strip('/').split('/')
-cpan_type="release"
-cpan_url="https://fastapi.metacpan.org/v1/"+cpan_type+"/"+cpan_url[-1]
-
-r=req.get(cpan_url, headers=headers)
-r.raise_for_status()
-cpandata=r.json()
+cpandata=cpan_get_release_info(aur_get_release_name(pkg_name))
 
 cache[pkg_name]={"name": cpandata["main_module"]}
 cpanmeta=cpandata["metadata"]
