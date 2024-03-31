@@ -49,7 +49,16 @@ def aur_get_release_name(pkg_name: str) -> str:
 	return aur_get_url(pkg_name).strip('/').split('/')[-1]
 
 def cpan_get_release_info(cpan_name: str, cpan_type: str="release"):
+	return cpan_api_get(cpan_name, cpan_type)
+
+def cpan_api_get(cpan_name: str, cpan_type: str, params: str=None):
 	cpan_url="https://fastapi.metacpan.org/v1/"+cpan_type+"/"+cpan_name
+	if params:
+		cpan_url+="?"+params
 	r=req.get(cpan_url, headers=headers)
 	r.raise_for_status()
 	return r.json()
+
+def cpan_module_to_release(cpan_module: str) -> (str, str):
+	cpan_release=cpan_api_get(cpan_module, "module", "fields=release")["release"]
+	return cpan_release[:cpan_release.rindex('-')], cpan_release[cpan_release.rindex('-')+1:]
