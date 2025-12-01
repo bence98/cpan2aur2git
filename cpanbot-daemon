@@ -1,10 +1,15 @@
 #!/bin/sh
 
-PATH="$HOME/perl5/bin${PATH:+:${PATH}}"; export PATH;
-PERL5LIB="$HOME/perl5/lib/perl5${PERL5LIB:+:${PERL5LIB}}"; export PERL5LIB;
-PERL_LOCAL_LIB_ROOT="$HOME/perl5${PERL_LOCAL_LIB_ROOT:+:${PERL_LOCAL_LIB_ROOT}}"; export PERL_LOCAL_LIB_ROOT;
-PERL_MB_OPT="--install_base \"$HOME/perl5\""; export PERL_MB_OPT;
-PERL_MM_OPT="INSTALL_BASE=$HOME/perl5"; export PERL_MM_OPT;
+CPANBOT_PERL_DIR="$HOME/cpanbot-perl5"
+
+# If you update Perl, XS modules installed as dependencies in this dir will fail to load and break CpanBot!
+rm -rf "${CPANBOT_PERL_DIR}"
+
+PATH="${CPANBOT_PERL_DIR}/bin${PATH:+:${PATH}}"; export PATH;
+PERL5LIB="${CPANBOT_PERL_DIR}/lib/perl5${PERL5LIB:+:${PERL5LIB}}"; export PERL5LIB;
+PERL_LOCAL_LIB_ROOT="${CPANBOT_PERL_DIR}${PERL_LOCAL_LIB_ROOT:+:${PERL_LOCAL_LIB_ROOT}}"; export PERL_LOCAL_LIB_ROOT;
+PERL_MB_OPT="--install_base \"${CPANBOT_PERL_DIR}\""; export PERL_MB_OPT;
+PERL_MM_OPT="INSTALL_BASE=${CPANBOT_PERL_DIR}"; export PERL_MM_OPT;
 
 FIFO=/tmp/cpanbot.fifo
 
